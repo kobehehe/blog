@@ -6,13 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2018/8 | xuxiaochen的乌托邦</title>
+  <title>go的错误处理 | xuxiaochen的乌托邦</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="xuxiaochen的乌托邦">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;archives&#x2F;2018&#x2F;08&#x2F;index.html">
+  <meta name="description" content="go处理错误的五种方式 首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，findLinks会直接将这个HTTP错误返回给调用者： resp, err :&#x3D; http.Get(url)if err !&#x3D; nil{    return nill, err} 当">
+<meta name="keywords" content="go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go的错误处理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86&#x2F;index.html">
 <meta property="og:site_name" content="xuxiaochen的乌托邦">
+<meta property="og:description" content="go处理错误的五种方式 首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，findLinks会直接将这个HTTP错误返回给调用者： resp, err :&#x3D; http.Get(url)if err !&#x3D; nil{    return nill, err} 当">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2020-07-16T03:41:13.976Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="xuxiaochen的乌托邦" type="application/atom+xml">
@@ -149,60 +153,182 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-go的错误处理" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2018-08-06T08:29:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-06</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">系统执行时间缓慢的原因分析</a>
+    <h1 class="article-title" itemprop="name">
+      go的错误处理
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
+        
+        <a href="/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="archive-article-date">
+  	<time datetime="2020-07-16T03:33:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>go处理错误的五种方式</p>
+<p>首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。<br>下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，<br>findLinks会直接将这个HTTP错误返回给调用者：</p>
+<p>resp, err := http.Get(url)<br>if err != nil{<br>    return nill, err<br>}</p>
+<p>当对html.Parse的调用失败时，findLinks不会直接返回html.Parse的错误，因为缺少两条重要信息：1、错误发生在解析器；2、url已经被解析。这些信息有助于错误的处理，findLinks会构造新的错误信息返回给调用者：<br>doc, err := html.Parse(resp.Body)<br>resp.Body.Close()<br>if err != nil {<br>    return nil, fmt.Errorf(“parsing %s as HTML: %v”, url,err)<br>}</p>
+<p>让我们来看看处理错误的第二种策略。如果错误的发生是偶然性的，或由不可预知的问题导致的。一个明智的选择是重新尝试失败的操作。在重试时，我们需要限制重试的时间间隔或重试的次数，防止无限制的重试。<br>gopl.io/ch5/wait<br>// WaitForServer attempts to contact the server of a URL.<br>// It tries for one minute using exponential back-off.<br>// It reports an error if all attempts fail.<br>func WaitForServer(url string) error {<br>    const timeout = 1 * time.Minute<br>    deadline := time.Now().Add(timeout)<br>    for tries := 0; time.Now().Before(deadline); tries++ {<br>        _, err := http.Head(url)<br>        if err == nil {<br>            return nil // success<br>        }<br>        log.Printf(“server not responding (%s);retrying…”, err)<br>        time.Sleep(time.Second &lt;&lt; uint(tries)) // exponential back-off<br>    }<br>    return fmt.Errorf(“server %s failed to respond after %s”, url, timeout)<br>}</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" target="_blank" rel="noopener" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/操作系统//" class="article-tag-list-link color5">操作系统</a>
+        			<a href="/categories/go语言//" class="article-tag-list-link color5">go语言</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" target="_blank" rel="noopener" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" target="_blank" rel="noopener" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" target="_blank" rel="noopener" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;" target="_blank" rel="noopener"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/11/15/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">消息队列必知必会</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" target="_blank" rel="noopener" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -225,8 +351,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
