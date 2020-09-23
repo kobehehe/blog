@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="xuxiaochen的乌托邦">
 <meta property="og:description" content="go处理错误的五种方式 首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，findLinks会直接将这个HTTP错误返回给调用者： 1resp, err :&#x3D; http.Get(url)2if err !&#x3D; nil&amp;#123;3    return nill">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2020-07-16T06:26:51.492Z">
+<meta property="og:updated_time" content="2020-09-23T11:20:04.438Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="xuxiaochen的乌托邦" type="application/atom+xml">
@@ -176,6 +176,7 @@
         <p>go处理错误的五种方式</p>
 <p>首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。<br>下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，<br>findLinks会直接将这个HTTP错误返回给调用者：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">resp, err := http.Get(url)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">return</span> nill, err</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>当对html.Parse的调用失败时，findLinks不会直接返回html.Parse的错误，因为缺少两条重要信息：1、错误发生在解析器；2、url已经被解析。这些信息有助于错误的处理，findLinks会构造新的错误信息返回给调用者：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">doc, err := html.Parse(resp.Body)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">resp.Body.Close()</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"parsing %s as HTML: %v"</span>, url,err)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
 <p>让我们来看看处理错误的第二种策略。如果错误的发生是偶然性的，或由不可预知的问题导致的。一个明智的选择是重新尝试失败的操作。在重试时，我们需要限制重试的时间间隔或重试的次数，防止无限制的重试。</p>
@@ -459,11 +460,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">php</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">redis</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color4">php</a>
+                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">linux</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -476,10 +481,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color5">redis memcache</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" target="_blank" rel="noopener" class="js-tag color1">linux</a>
               </li>
              
               <li class="article-tag-list-item">
