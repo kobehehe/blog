@@ -152,6 +152,270 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Linux-IO模式及-select、poll、epoll详解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/28/Linux-IO%E6%A8%A1%E5%BC%8F%E5%8F%8A-select%E3%80%81poll%E3%80%81epoll%E8%AF%A6%E8%A7%A3/">Linux IO模式及 select、poll、epoll详解</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/28/Linux-IO%E6%A8%A1%E5%BC%8F%E5%8F%8A-select%E3%80%81poll%E3%80%81epoll%E8%AF%A6%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-01-28T03:31:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>内核空间和用户空间<br>现代操作系统通过cpu进行计算的时候需要通过寻址空间来找寻内存存储的数据。比如操作系统是32位的，那么它的寻址能力是2的32次方那么它的这个内存<br>最多是4g。如果超过cpu的最大寻址能力cpu就找不到了内存中存的数据了。<br>操作系统的核心是内核 内核负责一些系统调用的底层操作。为了让用户的进程不影响到内核的操作，所以会把寻址空间拆分为两个空间。内核空间和用户空间。32位的操作系统 内核空间会占用1g<br>的大小。 用户空间占用3g的空间。用户空间会负责提供给用户进程使用</p>
+<p>缓存I/O<br>缓存I/O又称为标准I/O，大多数文件系统的默认I/O操作都是缓存I/O。在Linux的缓存I/O机制中，操作系统会将I/O的数据缓存在文件系统的页缓存中，<br>即数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间。<br>当应用程序需要读某块数据时会先查看内存中的缓存I/O是否有此数据 如果有的话直接返回给应用程序避免读磁盘。<br>缓存I/O的缺点：<br>在数据传输过程中需要在内核和用户空间进行多次的数据拷贝操作，这些拷贝操作所带来的cpu消耗和内存消耗是巨大的</p>
+<p>一个read I/O所需要的过程<br>我们知道了要read数据首先会把数据拷贝到系统内核中 然后再从系统内核的I/O缓存拷贝到应用程序的地址空间。所以一次readI/O会经历两个过程<br>1：等待数据copy到内核空间中<br>2：从内核空间copy到应用程序的地址空间中</p>
+<p>为了实现这两个过程linux系统搞了五种io模式<br>1阻塞I/O<br>2非阻塞I/O<br>3多路复用I/O (select,poll,epoll)<br>4异步I/O<br>5信号通知I/O</p>
+<p>阻塞I/O<br>默认情况下所有socket是阻塞I/O的 当调用没有数据返回时 当前进程会阻塞在这里。直到数据返回给当前进程</p>
+<p>非阻塞I/O<br>非阻塞I/O调用没有数据返回的时候当前进程不会阻塞会立即返回。不过当前进程会不断询问内核是否已经有数据了 如果某次询问得到有数据就会把数据哪回来。<br>（ps在数据处理完毕copy到应用程序的过程中实际上阻塞I/O了）</p>
+<p>多路复用I/O<br>当前进程首先会调用由（select或者poll或者epoll）实现的多路复用函数。调用的这个函数会阻塞当前的进程。而不是系统的IO阻塞当前的进程。<br>多路复用函数可以同时处理多个文件描述符fd，当其中有文件描述符处理完毕后，会返回给当前进程。这是多路复用最大的优势。</p>
+<p>select, poll ,epoll 的区别</p>
+<p>select 最大监听的文件描述符为1024个有数量限制。 poll最大监听的描述符无数量限制。<br>select和poll 都需要轮训遍历获取已经处理完成的文件描述符。所以当数量增加时效率会降低<br>epoll不会采取轮询的方式处理 会给每个文件描述符fd注册一个回调方法。当这个文件描述符处理完成后，就会触发回调方法把数据交给用户进程。<br>所以用epoll的方式比较适合处理文件链接符比较多的情况。redis和之所以是单线程能实现高并发就是用了io多路复用的技术</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexolinux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/linux//" class="article-tag-list-link color1">linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/28/Linux-IO%E6%A8%A1%E5%BC%8F%E5%8F%8A-select%E3%80%81poll%E3%80%81epoll%E8%AF%A6%E8%A7%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-一个linux服务器到底能支持多少tcp链接并发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/04/%E4%B8%80%E4%B8%AAlinux%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%B0%E5%BA%95%E8%83%BD%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B0%91tcp%E9%93%BE%E6%8E%A5%E5%B9%B6%E5%8F%91/">一个linux服务器到底能支持多少tcp链接并发</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/04/%E4%B8%80%E4%B8%AAlinux%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%B0%E5%BA%95%E8%83%BD%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B0%91tcp%E9%93%BE%E6%8E%A5%E5%B9%B6%E5%8F%91/" class="archive-article-date">
+  	<time datetime="2021-01-04T07:56:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-04</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在网络开发中，我发现有很多同学对一个基础问题始终是没有彻底搞明白。那就是一台服务器最大究竟能支持多少个网络连接？我想我有必要单独发一篇文章来好好说一下这个问题。</p>
+<p>很多同学看到这个问题的第一反应是65535。原因是：“听说端口号最多有65535个，那长连接就最多保持65535个了”。是这样的吗？还有的人说：“应该受TCP连接里四元组的空间大小限制，算起来是200多万亿个！”</p>
+<p>如果你对这个问题也是理解的不够彻底，那么今天讲个故事讲给你听！</p>
+<p>“TCP连接四元组是源IP地址、源端口、目的IP地址和目的端口。任意一个元素发生了改变，那么就代表的是一条完全不同的连接了。拿我的Nginx举例，它的端口是固定使用80。另外我的IP也是固定的，这样目的IP地址、目的端口都是固定的。剩下源IP地址、源端口是可变的。所以理论上我的Nginx上最多可以建立2的32次方（ip数）×2的16次方（port数）个连接。这是两百多万亿的一个大数字！！”</p>
+<p>“进程每打开一个文件（linux下一切皆文件，包括socket），都会消耗一定的内存资源。如果有不怀好心的人启动一个进程来无限的创建和打开新的文件，会让服务器崩溃。所以linux系统出于安全角度的考虑，在多个位置都限制了可打开的文件描述符的数量，包括系统级、用户级、进程级。这三个限制的含义和修改方式如下：”</p>
+<p>系统级：当前系统可打开的最大数量，通过fs.file-max参数可修改</p>
+<p>用户级：指定用户可打开的最大数量，修改/etc/security/limits.conf</p>
+<p>进程级：单个进程可打开的最大数量，通过fs.nr_open参数可修改</p>
+<p>$ ss -n | grep ESTAB | wc -l  查看系统的tcp链接数</p>
+<p>当文件的描述符的数量限制都放开后 理论上可以支持到限制数量这个数量级的链接。比如我限制数量打开到了100w 那么可以建立100w个不接受数据也不发送数据的tcp链接<br>不过实际上tcp链接肯定要接收数据 处理业务数据 发送数据的。所以实际上的服务器并发数 和服务器的cpu和内存大小，都有关系。理论上来讲cpu的性能越高 服务器的内存越大 支持的并发也就越多<br>具体情况要根据具体的业务来分析了。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/04/%E4%B8%80%E4%B8%AAlinux%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%B0%E5%BA%95%E8%83%BD%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B0%91tcp%E9%93%BE%E6%8E%A5%E5%B9%B6%E5%8F%91/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-go实现无锁支持并发的缓存" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/">go实现并发的非阻塞缓存</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/" class="archive-article-date">
+  	<time datetime="2020-09-23T11:07:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 sync.Mutex实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> memo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;sync&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Func is the type of the function to memoize.</span></span><br><span class="line"><span class="keyword">type</span> Func <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">interface</span>&#123;&#125;, error)</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> result <span class="keyword">struct</span> &#123;</span><br><span class="line">	value <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	err   error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//!+</span></span><br><span class="line"><span class="keyword">type</span> entry <span class="keyword">struct</span> &#123;</span><br><span class="line">	res   result</span><br><span class="line">	ready <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// closed when res is ready</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Memo <span class="keyword">struct</span> &#123;</span><br><span class="line">	f     Func</span><br><span class="line">	mu    sync.Mutex <span class="comment">// guards cache</span></span><br><span class="line">	cache <span class="keyword">map</span>[<span class="keyword">string</span>]*entry</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(f Func)</span> *<span class="title">Memo</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Memo&#123;f: f, cache: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*entry)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(memo *Memo)</span> <span class="title">Get</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, err error)</span></span> &#123;</span><br><span class="line">	memo.mu.Lock()</span><br><span class="line">	e := memo.cache[key]</span><br><span class="line">	<span class="keyword">if</span> e == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// This is the first request for this key.</span></span><br><span class="line">		<span class="comment">// This goroutine becomes responsible for computing</span></span><br><span class="line">		<span class="comment">// the value and broadcasting the ready condition.</span></span><br><span class="line">		e = &amp;entry&#123;ready: <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)&#125;</span><br><span class="line">		memo.cache[key] = e</span><br><span class="line">		memo.mu.Unlock()</span><br><span class="line"></span><br><span class="line">		e.res.value, e.res.err = memo.f(key)</span><br><span class="line"></span><br><span class="line">		<span class="built_in">close</span>(e.ready) <span class="comment">// broadcast ready condition</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// This is a repeat request for this key.</span></span><br><span class="line">		memo.mu.Unlock()</span><br><span class="line"></span><br><span class="line">		&lt;-e.ready <span class="comment">// wait for ready condition</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> e.res.value, e.res.err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go语言//" class="article-tag-list-link color5">go语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go的内存同步" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -772,272 +1036,6 @@
 
 
   
-    <article id="post-es的倒排索引高性能的原因" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/07/03/es%E7%9A%84%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%8E%9F%E5%9B%A0/">es的倒排索引高性能的原因</a>
-    </h1>
-  
-
-        
-        <a href="/2019/07/03/es%E7%9A%84%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%8E%9F%E5%9B%A0/" class="archive-article-date">
-  	<time datetime="2019-07-03T03:51:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-07-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>es是一个搜素引擎 它就是为建立高性能搜索功能而建立的。所以es的insert和update效率相应会慢一些。因为文档在insert进去es的时候会给所有字段建立倒排索引。所以insert和update时尽量用异步的方式来进行保证效率。而es高效率的搜素正是建立在倒排索引的基础上。下面我们分析下倒排索引为什么性能会高。</p>
-<p>假设我们建立了一个索引结构如下<br>id name age gender<br>1 张三 24 男<br>2 李四 24 女<br>3 王五 23 男</p>
-<p>那么es会给这些字段主动建立倒排索引如下<br>name字段：<br>term posting list<br>张三 1<br>李四 2<br>王五 3</p>
-        
-          <a class="article-more-a" href="/2019/07/03/es%E7%9A%84%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%8E%9F%E5%9B%A0/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">es</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/07/03/es%E7%9A%84%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E9%AB%98%E6%80%A7%E8%83%BD%E7%9A%84%E5%8E%9F%E5%9B%A0/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-redis的主从和集群" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/06/20/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E9%9B%86%E7%BE%A4/">redis的主从和集群</a>
-    </h1>
-  
-
-        
-        <a href="/2019/06/20/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E9%9B%86%E7%BE%A4/" class="archive-article-date">
-  	<time datetime="2019-06-20T07:48:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>redis的主从</p>
-<p>增量同步<br>redis的主服务器会把修改内存数据的指令都本分到redis的一个环形内存buffer里 然后异步的向备用服务器同步指令。环形内存大小有限 如果内存用完会覆盖老的指令。<br>如果出现网络延迟主服务器一段时间内没有向备份服务器中同步数据 那么就有可能丢失一部分指令。这时候就要用到快照同步了。</p>
-        
-          <a class="article-more-a" href="/2019/06/20/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E9%9B%86%E7%BE%A4/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/06/20/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E9%9B%86%E7%BE%A4/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-redis为啥单线程性能还这么好" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">redis为啥单线程性能还这么好</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/" class="archive-article-date">
-  	<time datetime="2019-05-05T11:46:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>因为数据都从内存里读取 非阻塞io 事件驱动 多路复用</p>
-<p>redis的客户端和服务器端 通过套接字进行交互。 文件事件是对套接字的抽象，每当一个套接字准备好 链接应答，写入 读取 关闭等操作就会产生一个文件事件。有可能并发产生多个套接字 相当于是一个套接字的池子。<br>交互基本就是四层 套接字-&gt;多路io复用程序-&gt;文件事件分派器-&gt;事件处理器。<br>多路io复用程序会监听套接字 并向文件事件分派器以队列的形式一个个的发送文件事件 文件事件分派器交给事件处理器来处理事件。处理完一个事件后再处理下一个事件。</p>
-<p>对于监听套接字 当有客户端执行 connect时 监听套接字可读。对于已连接套接字 客户端对套接字执行write操作或者close操作时 套接字可读</p>
-        
-          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1159,6 +1157,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
               </li>
              
@@ -1175,7 +1177,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">hexolinux</a>
               </li>
             
             <div class="clearfix"></div>

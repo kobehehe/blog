@@ -152,6 +152,254 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-memcache内核原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/03/memcache%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86/">memcache内核原理</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/03/memcache%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86/" class="archive-article-date">
+  	<time datetime="2018-04-03T07:20:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>第一类问题：知道不知道<br>这一类问题，考察用没用过，知不知道，相对比较好回答。</p>
+<p>关于memcache一些基础特性，使用过的小伙伴基本都能回答出来：<br>（1）mc的核心职能是KV内存管理，value存储最大为1M，它不支持复杂数据结构（哈希、列表、集合、有序集合等）；<br>（2）mc不支持持久化；<br>（3）mc支持key过期；<br>（4）mc持续运行很少会出现内存碎片，速度不会随着服务运行时间降低；<br>（5）mc使用非阻塞IO复用网络模型，使用监听线程/工作线程的多线程模型；</p>
+<p>第二类问题：为什么(why)，什么(what)<br>这一类问题，考察对于一个工具，只停留在使用层面，还是有原理性的思考。</p>
+<p>memcache为什么不支持复杂数据结构？为什么不支持持久化？<br>业务决定技术方案，mc的诞生，以“以服务的方式，而不是库的方式管理KV内存”为设计目标，它颠覆的是，KV内存管理组件库，复杂数据结构与持久化并不是它的初衷。</p>
+<p>当然，用“颠覆”这个词未必不合适，库和服务各有使用场景，只是在分布式的环境下，服务的使用范围更广。设计目标，诞生背景很重要，这一定程度上决定了实现方案，就如redis的出现，是为了有一个更好用，更多功能的缓存服务。<br>画外音：我很喜欢问这个问题，大部分候选人面对这个没有标准答案的问题，状态可能是蒙圈。</p>
+        
+          <a class="article-more-a" href="/2018/04/03/memcache%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">memcache</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/03/memcache%E5%86%85%E6%A0%B8%E5%8E%9F%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-人类简史" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/24/%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2/">人类简史</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/24/%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2/" class="archive-article-date">
+  	<time datetime="2017-12-24T15:16:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>号称日不落帝国的大英帝国 也是号称传播着自由主义和自由贸易两大福音。苏联人更觉得责无旁贷，必须协助推动这个历史的必然 从资本主义走向无产阶级专政的乌托邦。至于现在的美国人，他们认为美国必须负起道义和责任 让第三世界国家同样享有民主和人权 就算这得靠巡航导弹和F-16战机 也在所不惜。</p>
+<p>宗教必须同时具备普世特质和推广特质</p>
+<p>佛教的教诲一言以蔽之：痛苦来自欲望 要从痛苦中解脱就要放下欲望 而要放下欲望 就必须训练心智 体验食物的本质</p>
+        
+          <a class="article-more-a" href="/2017/12/24/%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/读书心得//" class="article-tag-list-link color5">读书心得</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/24/%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-乌合之众" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">乌合之众</a>
+    </h1>
+  
+
+        
+        <a href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/" class="archive-article-date">
+  	<time datetime="2017-06-13T01:13:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一种文明的繁荣与进步，如果仅仅依靠以人多势众自夸的低劣成员的选票，是绝对无法让人放心的，一个国家的稳定与发展，必须由少数社会精英阶层来掌舵。</p>
+<p>在任何一个国家中，任何一个当选领袖的意见，都会反映着这个民族的禀性，而我们看到这种丙型从一代人到下一代人，世世代代的流传下去，从来都不会出现显著的变化。</p>
+<p>群体中的人做事时有着明确的目标，但是他们却不知道自己在做什么。</p>
+<p>群体相信一切不可能的事情，相信一切不合逻辑的事情，相信一切不存在的事情，但唯独－不相信现实生活的日常逻辑。</p>
+        
+          <a class="article-more-a" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/读书心得//" class="article-tag-list-link color5">读书心得</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-php底层运行机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -537,6 +785,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">消息队列</a>
               </li>
              
@@ -553,7 +805,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">linux</a>
+                <a href="javascript:void(0)" class="js-tag color5">hexolinux</a>
               </li>
             
             <div class="clearfix"></div>
