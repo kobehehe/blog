@@ -152,6 +152,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-redis字符串的底层实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">redis字符串的底层实现</a>
+    </h1>
+  
+
+        
+        <a href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
+  	<time datetime="2019-09-05T03:54:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>redis没有运用c语言的字符串结构来存储。而运用了sds的一个存储结构。为什么用这个存储结构？且听我细细道来。</p>
+<p>sds的存储结构由三部分组成 分别是free,len,buf(字节数组三部分构成)。<br>传通的c字符串结尾会有一个”\o”来判定字符串长度需要遍历数组。时间复杂度是o(n).<br>sds直接取len即可时间复杂度是o(1)</p>
+        
+          <a class="article-more-a" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go语言当中的协程和线程的区别" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -908,82 +996,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/10/12/go%E8%AF%AD%E8%A8%80%E7%9A%84%E5%90%84%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-系统执行时间缓慢的原因分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">系统执行时间缓慢的原因分析</a>
-    </h1>
-  
-
-        
-        <a href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2018-08-06T08:29:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一般一个系统执行缓慢进行分析时一般是在两个维度进行分析。<br>基于执行时间的分析和基于等待的分析，基于执行时间的分析指的是什么任务执行的时间最长，而基于等待的分析则是判断任务在什么地方阻塞的时间过长。<br>php语言中有一款叫做xhprof的测量工具 能够很好的分析应用程序的性能瓶颈。<br>通过xhprof分析时主要看以下字段：</p>
-        
-          <a class="article-more-a" href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/操作系统//" class="article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/08/06/%E7%B3%BB%E7%BB%9F%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%E7%BC%93%E6%85%A2%E7%9A%84%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">展开全文 >></a>
         </p>
       
 

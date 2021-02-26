@@ -152,6 +152,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-golang的锁机制" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/26/golang%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6/">golang的锁机制</a>
+    </h1>
+  
+
+        
+        <a href="/2021/02/26/golang%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6/" class="archive-article-date">
+  	<time datetime="2021-02-26T03:32:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>话说golang的设计原则是通信顺序进程（communicating sequential processes），通过通信来并发，而不是通过对数据加锁来进行访问。但是在一些<br>特殊场景用锁用代码实现起来可能更方便一些。所以golang也提供了锁机制。<br>两种锁 一种是互斥锁，另一种是读写锁</p>
+<p>互斥锁 sync.Mutex和读写锁 sync.RWMutex</p>
+<p>mutex 加锁lock() ,解锁 unlock().加锁后groutine会被彻底锁定 任何操作不能进入。直到锁被释放。</p>
+<p>RWMutex 叫做多读单写锁。如果加的是读锁Rlock().则可以加很多个读锁。不会阻塞读操作。 如果加的是写锁则会阻塞读锁和写锁。和互斥锁的效果是<br>一样的。 这个在读比较多的场景下使用。只要當下是讀的時候，都會同時進行，並不會互相影響，寫的時候就會 block 讀和寫，只有一個寫會發生。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go语言//" class="article-tag-list-link color5">go语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/26/golang%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-nginx-日志常见查询" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -913,94 +1001,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/10/14/redis%E6%8C%81%E4%B9%85%E5%8C%96%E7%9A%84%E5%BF%AB%E7%85%A7rdb%E5%92%8C%E6%8C%87%E4%BB%A4AOF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-redis字符串的底层实现" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">redis字符串的底层实现</a>
-    </h1>
-  
-
-        
-        <a href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/" class="archive-article-date">
-  	<time datetime="2019-09-05T03:54:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>redis没有运用c语言的字符串结构来存储。而运用了sds的一个存储结构。为什么用这个存储结构？且听我细细道来。</p>
-<p>sds的存储结构由三部分组成 分别是free,len,buf(字节数组三部分构成)。<br>传通的c字符串结尾会有一个”\o”来判定字符串长度需要遍历数组。时间复杂度是o(n).<br>sds直接取len即可时间复杂度是o(1)</p>
-        
-          <a class="article-more-a" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/09/05/redis%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0/">展开全文 >></a>
         </p>
       
 
