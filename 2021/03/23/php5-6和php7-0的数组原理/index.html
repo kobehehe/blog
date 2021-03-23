@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Tag: php | xuxiaochen的乌托邦</title>
+  <title>php5.6和php7.0的数组原理 | xuxiaochen的乌托邦</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="xuxiaochen的乌托邦">
-<meta property="og:url" content="http://yoursite.com/tags/php/index.html">
+  <meta name="description" content="大家都直到php的数组是个万金油。可以通过这种结构实现数组 链表 hash等各种数据结构。这个也是php开发效率高的原理之一。但是功能这么全的结构底层是怎么样的。其实php5.6和php7实现的还有些差异。php7的数组效率更高一些。php5.6实现的原理是哈希表和双向链表实现的。&lt;–more–&gt;首先是定义了哈希表的一个结构体 hashTable 结构体里有表头指针 表尾指针 表容量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php5.6和php7.0的数组原理">
+<meta property="og:url" content="http://yoursite.com/2021/03/23/php5-6%E5%92%8Cphp7-0%E7%9A%84%E6%95%B0%E7%BB%84%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="xuxiaochen的乌托邦">
+<meta property="og:description" content="大家都直到php的数组是个万金油。可以通过这种结构实现数组 链表 hash等各种数据结构。这个也是php开发效率高的原理之一。但是功能这么全的结构底层是怎么样的。其实php5.6和php7实现的还有些差异。php7的数组效率更高一些。php5.6实现的原理是哈希表和双向链表实现的。&lt;–more–&gt;首先是定义了哈希表的一个结构体 hashTable 结构体里有表头指针 表尾指针 表容量">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-03-23T07:50:36.000Z">
+<meta property="article:modified_time" content="2021-03-23T09:30:41.091Z">
 <meta property="article:author" content="xuxiaochen">
+<meta property="article:tag" content="php">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="xuxiaochen的乌托邦" type="application/atom+xml">
@@ -150,36 +155,59 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-php5-6和php7-0的数组原理" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      php5.6和php7.0的数组原理
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/03/23/php5-6%E5%92%8Cphp7-0%E7%9A%84%E6%95%B0%E7%BB%84%E5%8E%9F%E7%90%86/" class="archive-article-date">
+
+        
+        <a href="/2021/03/23/php5-6%E5%92%8Cphp7-0%E7%9A%84%E6%95%B0%E7%BB%84%E5%8E%9F%E7%90%86/" class="archive-article-date">
   	<time datetime="2021-03-23T07:50:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-23</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/23/php5-6%E5%92%8Cphp7-0%E7%9A%84%E6%95%B0%E7%BB%84%E5%8E%9F%E7%90%86/">php5.6和php7.0的数组原理</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大家都直到php的数组是个万金油。可以通过这种结构实现数组 链表 hash等各种数据结构。这个也是php开发效率高的原理之一。<br>但是功能这么全的结构底层是怎么样的。其实php5.6和php7实现的还有些差异。php7的数组效率更高一些。<br>php5.6实现的原理是哈希表和双向链表实现的。<br>&lt;–more–&gt;<br>首先是定义了哈希表的一个结构体 hashTable 结构体里有表头指针 表尾指针 表容量 存储哈希的数组等属性。<br>存储hash的的数组 是一个bucket结构体。bucket 存储数据 数据指针,还有四个指针pListNext(指向hash表下一个节点)，pListLast 指向hash表上一个节点)<br>pNext(指向链表的下一个元素),pLast(指向链表的上一个元素)。是用链表来解决hash冲突的。链表的指针pListNext 会根据插入的顺序进行链接。所以<br>foreach可以按照插入顺序进行遍历。并且foreach会自动执行一个reset的操作会把当前的指针放在头结点。<br>这个结构有些明显的缺点 指针操作太多。新插入元素 或删除元素的时候要不断的申请内存和释放内存影响性能 所以php7对数组的存储方式<br>进行了一些升级</p>
+<p>php7主要改变了hashTable中bucket的存储方式 php7会提前申请一段连续的bucket数组内存来存放数据。不会在频繁的申请释放内存。<br>会对key进行hash然后散列到hashtable的相应位置。但是问题来了怎么按照顺序来遍历数据呢？因为hash后是无序的啊。php官方想来一个办法<br>用了一个映射表来存储bucket数组的下标。bucket数组是有序的 但是映射表是无序的。遍历的时候直接遍历bucket数组就好了。如果有hash冲突 生成了映射表<br>相同的hash 就会在bucket中用单链表来链接。</p>
+<p>其具体实现是：将冲突的 Bucket 串成链表，这样中间映射表映射出的就不是某一个元素，而是一个 Bucket 链表，通过散列函数定位到对应的 Bucket 链表时，<br>需要遍历链表，逐个对比 Key 值，继而找到目标元素。而每个 Bucket 之间的链接则是将原 value 的下标保存到新 value 的 zval.u2.next 里，新 value<br>放在当前位置上，从而形成一个单向链表。</p>
+<p>如果已删除元素所占比例达到阈值，则会移除已被逻辑删除的 Bucket，然后将后面的 Bucket 向前补上空缺的 Bucket，因为 Bucket 的下标发生了变动，所以还需要更改每个元素在中间映射表中储存的实际下标值。<br>如果未达到阈值，PHP 则会申请一个大小是原数组两倍的新数组，并将旧数组中的数据复制到新数组中，因为数组长度发生了改变，所以 key-value 的映射关系需要重新计算，这个步骤为重建索引。</p>
 
-        <div class="article-info info-on-right">
-          
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -191,78 +219,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2021/03/23/php5-6%E5%92%8Cphp7-0%E7%9A%84%E6%95%B0%E7%BB%84%E5%8E%9F%E7%90%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2021/02/26/golang%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">golang的锁机制</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/03/05/php%E5%BA%95%E5%B1%82%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6/" class="archive-article-date">
-  	<time datetime="2017-03-05T03:05:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/03/05/php%E5%BA%95%E5%B1%82%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6/">php底层运行机制</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">php</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/php//" class="article-tag-list-link color4">php</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -285,9 +341,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
