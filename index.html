@@ -152,6 +152,96 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-redis的主从模式-哨兵模式-集群模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/24/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/">redis的主从模式 哨兵模式 集群模式</a>
+    </h1>
+  
+
+        
+        <a href="/2021/03/24/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
+  	<time datetime="2021-03-24T06:43:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-03-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式<br>主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了<br>那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用</p>
+<p>哨兵的话相当于是一个独立的进程来监控服务中的各个节点。<br>1监控 独立的进程来监控服务中的各个节点<br>2通知 如果某个节点出问题会发出通知告知<br>3故障转移 如果主节点出问题了 哨兵会从剩下的从节点选举出来一个新的节点作为主节点<br>4提供主服务器地址：可以向当前使用者提供主服务地址。</p>
+<p>故障转移的原理就是 如果一个哨兵发现主节点下线 则会设置为主观下线。会询问其他哨兵 当超过半数的哨兵都同意下线后 会设置为客观下线。<br>下面就进行主节点的选举。</p>
+<p>集群模式<br>就是一个提供在多个redis节点共享数据的程序集合。</p>
+<p>Redis集群提供一定的可用性 可以在某个节点不可用的时候继续处理命令。<br>集群的优势可以将数据分布到不同的机器上面</p>
+<p>redis集群有16384个hash槽组成集群的每个节点都负责一部分哈希槽。每一个key会通过crc32的hash算法算出值 然后对16384 进行取模。可以计算出一个下标。<br>决定放置到哪个槽里边。交给相应的节点去处理。<br>Redis 集群的主从复制模型 为了使在部分节点失败或者大部分节点无法通信的情况下集群仍然可用，所以集群使用了主从复制模型,每个节点都会有N-1个复制品.</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/03/24/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-php5-6和php7-0的数组原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -903,93 +993,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/11/15/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-缓存相关的一些内容" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/16/%E7%BC%93%E5%AD%98%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E5%86%85%E5%AE%B9/">缓存相关的一些内容</a>
-    </h1>
-  
-
-        
-        <a href="/2019/10/16/%E7%BC%93%E5%AD%98%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E5%86%85%E5%AE%B9/" class="archive-article-date">
-  	<time datetime="2019-10-16T03:58:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-10-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>缓存主要有三种形式 分别是静态缓存 动态缓存 热点本地缓存<br>静态缓存的应用场景比如说是门户网站的新闻 基本不变的内容可以生成静态页面由web服务器nginx进行缓存。<br>应用最多的应该是 动态缓存 memcache和redis就是做这个缓存应用最广泛的中间件。<br>热点本地缓存应用场景主要是解决突发大流量的场景 比如微博鹿晗公布恋情 大量的请求都会去鹿晗主页。这种到极端的热点数据会产生大量请求。热点本地缓存主要部署在应用服务器的代码中，用于阻挡热点查询对分布式缓存节点和数据库的查询压力。</p>
-        
-          <a class="article-more-a" href="/2019/10/16/%E7%BC%93%E5%AD%98%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E5%86%85%E5%AE%B9/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">缓存</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/10/16/%E7%BC%93%E5%AD%98%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E5%86%85%E5%AE%B9/">展开全文 >></a>
         </p>
       
 
