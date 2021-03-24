@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>redis的主从模式 哨兵模式 集群模式 | xuxiaochen的乌托邦</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用 哨兵的话相当于是一个独立的进程来监控服务">
+  <meta name="description" content="大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis的主从模式 哨兵模式 集群模式">
 <meta property="og:url" content="http://yoursite.com/2021/03/24/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F-%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F/index.html">
 <meta property="og:site_name" content="xuxiaochen的乌托邦">
-<meta property="og:description" content="大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用 哨兵的话相当于是一个独立的进程来监控服务">
+<meta property="og:description" content="大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-03-24T06:43:31.000Z">
-<meta property="article:modified_time" content="2021-03-24T08:16:00.423Z">
+<meta property="article:modified_time" content="2021-03-24T08:16:42.808Z">
 <meta property="article:author" content="xuxiaochen">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -176,6 +176,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>大家都知道redis官方提供了一些分布式的功能，让redis可以比较轻松的实现分布式的功能。主要有三种 主从模式，哨兵模式，集群模式<br>主从模式属于最基础的模式 一般是主服务器处理io操作 从服务器提供读操作。这样能够最大程度的提示redis的性能。但是如果主节点挂了<br>那么需要手动的处理，这段时间线上环境写服务不可用这是不能容忍的。所以用主从的话一般配合哨兵使用</p>
+<a id="more"></a>
 <p>哨兵的话相当于是一个独立的进程来监控服务中的各个节点。<br>1监控 独立的进程来监控服务中的各个节点<br>2通知 如果某个节点出问题会发出通知告知<br>3故障转移 如果主节点出问题了 哨兵会从剩下的从节点选举出来一个新的节点作为主节点<br>4提供主服务器地址：可以向当前使用者提供主服务地址。</p>
 <p>故障转移的原理就是 如果一个哨兵发现主节点下线 则会设置为主观下线。会询问其他哨兵 当超过半数的哨兵都同意下线后 会设置为客观下线。<br>下面就进行主节点的选举。</p>
 <p>集群模式<br>就是一个提供在多个redis节点共享数据的程序集合。</p>
