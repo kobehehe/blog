@@ -152,6 +152,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go的错误处理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">go的错误处理</a>
+    </h1>
+  
+
+        
+        <a href="/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="archive-article-date">
+  	<time datetime="2020-07-16T03:33:53.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>go处理错误的五种方式</p>
+<p>首先，也是最常用的方式是传播错误。这意味着函数中某个子程序的失败，会变成该函数的失败。<br>下面，我们以5.3节的findLinks函数作为例子。如果findLinks对http.Get的调用失败，<br>findLinks会直接将这个HTTP错误返回给调用者：</p>
+        
+          <a class="article-more-a" href="/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go语言//" class="article-tag-list-link color5">go语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/16/go%E7%9A%84%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-消息队列必知必会" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -917,93 +1005,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/04/22/https%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-高性能mysql之索引篇" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/11/%E9%AB%98%E6%80%A7%E8%83%BDmysql%E4%B9%8B%E7%B4%A2%E5%BC%95%E7%AF%87/">高性能mysql之索引篇</a>
-    </h1>
-  
-
-        
-        <a href="/2019/04/11/%E9%AB%98%E6%80%A7%E8%83%BDmysql%E4%B9%8B%E7%B4%A2%E5%BC%95%E7%AF%87/" class="archive-article-date">
-  	<time datetime="2019-04-11T09:08:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这几天把索引有关的知识系统看了一遍，现在总结如下。<br>理解mysql中索引是如何工作可以参考一本书的索引部分，要想在一本书中快速找到某个特定主题，一般会先看书的索引部分即目录，快速找到对应的页码。<br>在mysql中索引使用的方法和书类似，其先在索引中找到对应的值，然后根据匹配的索引纪录找到对应的数据行。在mysql中索引是在存储引擎层而不是在服务器层实现的。<br>重点关注B-tree索引</p>
-        
-          <a class="article-more-a" href="/2019/04/11/%E9%AB%98%E6%80%A7%E8%83%BDmysql%E4%B9%8B%E7%B4%A2%E5%BC%95%E7%AF%87/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">mysql</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/数据库//" class="article-tag-list-link color4">数据库</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/04/11/%E9%AB%98%E6%80%A7%E8%83%BDmysql%E4%B9%8B%E7%B4%A2%E5%BC%95%E7%AF%87/">展开全文 >></a>
         </p>
       
 
