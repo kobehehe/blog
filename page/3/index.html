@@ -152,6 +152,95 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-redis为啥单线程性能还这么好" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">redis为啥单线程性能还这么好</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/" class="archive-article-date">
+  	<time datetime="2019-05-05T11:46:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>因为数据都从内存里读取 非阻塞io 事件驱动 多路复用</p>
+<p>redis的客户端和服务器端 通过套接字进行交互。 文件事件是对套接字的抽象，每当一个套接字准备好 链接应答，写入 读取 关闭等操作就会产生一个文件事件。有可能并发产生多个套接字 相当于是一个套接字的池子。<br>交互基本就是四层 套接字-&gt;多路io复用程序-&gt;文件事件分派器-&gt;事件处理器。<br>多路io复用程序会监听套接字 并向文件事件分派器以队列的形式一个个的发送文件事件 文件事件分派器交给事件处理器来处理事件。处理完一个事件后再处理下一个事件。</p>
+<p>对于监听套接字 当有客户端执行 connect时 监听套接字可读。对于已连接套接字 客户端对套接字执行write操作或者close操作时 套接字可读</p>
+        
+          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-https工作原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -886,85 +975,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2017/12/24/%E4%BA%BA%E7%B1%BB%E7%AE%80%E5%8F%B2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-乌合之众" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">乌合之众</a>
-    </h1>
-  
-
-        
-        <a href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/" class="archive-article-date">
-  	<time datetime="2017-06-13T01:13:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-06-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一种文明的繁荣与进步，如果仅仅依靠以人多势众自夸的低劣成员的选票，是绝对无法让人放心的，一个国家的稳定与发展，必须由少数社会精英阶层来掌舵。</p>
-<p>在任何一个国家中，任何一个当选领袖的意见，都会反映着这个民族的禀性，而我们看到这种丙型从一代人到下一代人，世世代代的流传下去，从来都不会出现显著的变化。</p>
-<p>群体中的人做事时有着明确的目标，但是他们却不知道自己在做什么。</p>
-<p>群体相信一切不可能的事情，相信一切不合逻辑的事情，相信一切不存在的事情，但唯独－不相信现实生活的日常逻辑。</p>
-        
-          <a class="article-more-a" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/读书心得//" class="article-tag-list-link color5">读书心得</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/06/13/%E4%B9%8C%E5%90%88%E4%B9%8B%E4%BC%97/">展开全文 >></a>
         </p>
       
 

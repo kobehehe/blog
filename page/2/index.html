@@ -152,6 +152,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-go实现无锁支持并发的缓存" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/">go实现并发的非阻塞缓存</a>
+    </h1>
+  
+
+        
+        <a href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/" class="archive-article-date">
+  	<time datetime="2020-09-23T11:07:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-09-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 sync.Mutex实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> memo</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;sync&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Func is the type of the function to memoize.</span></span><br><span class="line"><span class="keyword">type</span> Func <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">interface</span>&#123;&#125;, error)</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> result <span class="keyword">struct</span> &#123;</span><br><span class="line">	value <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	err   error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//!+</span></span><br><span class="line"><span class="keyword">type</span> entry <span class="keyword">struct</span> &#123;</span><br><span class="line">	res   result</span><br><span class="line">	ready <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// closed when res is ready</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Memo <span class="keyword">struct</span> &#123;</span><br><span class="line">	f     Func</span><br><span class="line">	mu    sync.Mutex <span class="comment">// guards cache</span></span><br><span class="line">	cache <span class="keyword">map</span>[<span class="keyword">string</span>]*entry</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(f Func)</span> *<span class="title">Memo</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Memo&#123;f: f, cache: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*entry)&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(memo *Memo)</span> <span class="title">Get</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, err error)</span></span> &#123;</span><br><span class="line">	memo.mu.Lock()</span><br><span class="line">	e := memo.cache[key]</span><br><span class="line">	<span class="keyword">if</span> e == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// This is the first request for this key.</span></span><br><span class="line">		<span class="comment">// This goroutine becomes responsible for computing</span></span><br><span class="line">		<span class="comment">// the value and broadcasting the ready condition.</span></span><br><span class="line">		e = &amp;entry&#123;ready: <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)&#125;</span><br><span class="line">		memo.cache[key] = e</span><br><span class="line">		memo.mu.Unlock()</span><br><span class="line"></span><br><span class="line">		e.res.value, e.res.err = memo.f(key)</span><br><span class="line"></span><br><span class="line">		<span class="built_in">close</span>(e.ready) <span class="comment">// broadcast ready condition</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// This is a repeat request for this key.</span></span><br><span class="line">		memo.mu.Unlock()</span><br><span class="line"></span><br><span class="line">		&lt;-e.ready <span class="comment">// wait for ready condition</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> e.res.value, e.res.err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">go</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/go语言//" class="article-tag-list-link color5">go语言</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/09/23/go%E5%AE%9E%E7%8E%B0%E6%97%A0%E9%94%81%E6%94%AF%E6%8C%81%E5%B9%B6%E5%8F%91%E7%9A%84%E7%BC%93%E5%AD%98/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-go的内存同步" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -920,95 +1008,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2019/06/20/redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E9%9B%86%E7%BE%A4/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-redis为啥单线程性能还这么好" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">redis为啥单线程性能还这么好</a>
-    </h1>
-  
-
-        
-        <a href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/" class="archive-article-date">
-  	<time datetime="2019-05-05T11:46:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>因为数据都从内存里读取 非阻塞io 事件驱动 多路复用</p>
-<p>redis的客户端和服务器端 通过套接字进行交互。 文件事件是对套接字的抽象，每当一个套接字准备好 链接应答，写入 读取 关闭等操作就会产生一个文件事件。有可能并发产生多个套接字 相当于是一个套接字的池子。<br>交互基本就是四层 套接字-&gt;多路io复用程序-&gt;文件事件分派器-&gt;事件处理器。<br>多路io复用程序会监听套接字 并向文件事件分派器以队列的形式一个个的发送文件事件 文件事件分派器交给事件处理器来处理事件。处理完一个事件后再处理下一个事件。</p>
-<p>对于监听套接字 当有客户端执行 connect时 监听套接字可读。对于已连接套接字 客户端对套接字执行write操作或者close操作时 套接字可读</p>
-        
-          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">redis</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/中间件相关//" class="article-tag-list-link color1">中间件相关</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/05/05/redis%E4%B8%BA%E5%95%A5%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%80%A7%E8%83%BD%E8%BF%98%E8%BF%99%E4%B9%88%E5%A5%BD/">展开全文 >></a>
         </p>
       
 
